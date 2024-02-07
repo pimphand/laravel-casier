@@ -23,3 +23,4 @@ Route::prefix('/auth/social/{provider}')->group(function () {
     Route::get('/', [SocialAuthController::class,'redirectToProvider']);
     Route::get('/callback', [SocialAuthController::class,'handleCallback']);
 });
+
