@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('users', UserController::class);
+
+Route::prefix('/auth/social/{provider}')->group(function () {
+    Route::get('/', [SocialAuthController::class,'redirectToProvider']);
+    Route::get('/callback', [SocialAuthController::class,'handleCallback']);
+});

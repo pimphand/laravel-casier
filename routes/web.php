@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+Route::prefix('/auth/social/{provider}')->group(function () {
+    Route::get('/', [SocialAuthController::class,'redirectToProvider']);
+    Route::get('/callback', [SocialAuthController::class,'handleCallback']);
 });
