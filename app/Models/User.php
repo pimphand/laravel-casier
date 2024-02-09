@@ -3,16 +3,25 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements LaratrustUser
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesAndPermissions;
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->uuid = (string) Str::uuid();
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -33,11 +42,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'id',
+        'store_id',
+        'deleted_at',
+        'email_verified_at',
+        'role',
     ];
-
-    protected $primaryKey = 'id';
-    protected $keyType = 'string';
-
     /**
      * The attributes that should be cast.
      *
@@ -47,4 +57,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function ScopeIsStore($query)
+    {
+        return $query->where('store_id', auth()->user()->store_id);
+    }
+
+    public function ScopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function ScopeFindUuid($query, $uuid)
+    {
+        $user = $query->where('uuid', $uuid)->first();
+        if ($user) {
+            return $user;
+        }
+
+        return response()->json(['message' => 'User not found'], 404);
+    }
 }

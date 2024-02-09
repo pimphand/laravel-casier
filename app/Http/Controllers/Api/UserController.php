@@ -3,8 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
@@ -13,15 +20,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $users = QueryBuilder::for(User::isStore())
+            ->allowedFilters(['name', 'email', 'phone'])
+            ->paginate(10);
+        return UserResource::collection($users);
     }
 
     /**
@@ -29,7 +31,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json(['error' => $validate->errors()], 422);
+        }
+
+        $request['password'] = Hash::make($request['password']);
+        $request['store_id'] = Auth::user()->store_id;
+        $user = User::create($request->validate());
+
+        return new UserResource($user);
     }
 
     /**
@@ -37,15 +54,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $user = User::FindUuid($id);
+        return new UserResource($user);
     }
 
     /**
@@ -53,7 +63,28 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($request->id, 'uuid'),
+            ],
+            'password' => 'string|min:8',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json(['error' => $validate->errors()], 422);
+        }
+
+        $user = User::FindUuid($id);
+        $request['password'] = $request['password'] ? Hash::make($request['password']) : $user->password;
+        $user->update($request->validate());
+
+        return new UserResource($user);
     }
 
     /**
@@ -61,6 +92,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        User::FindUuid($id)->delete();
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }

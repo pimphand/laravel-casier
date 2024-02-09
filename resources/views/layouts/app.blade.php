@@ -200,16 +200,7 @@
 
           <!-- Container-fluid starts-->
           <div class="container-fluid">
-            <div class="row starter-main">
-              <div class="col-sm-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h5>Kick start your project development !</h5>
-
-                  </div>
-                </div>
-              </div>
-            </div>
+            @yield('content')
           </div>
           <!-- Container-fluid Ends-->
         </div>
@@ -251,6 +242,6 @@
     <script src="{{ asset('assets') }}/js/theme-customizer/customizer.js"></script>
     <!-- login js-->
     <!-- Plugin used-->
-    @stack('script')
+    @stack('js')
   </body>
 </html>

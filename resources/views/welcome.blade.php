@@ -3,7 +3,7 @@
     @include('components.admin.page-header', [
         'breadcrumb' => [
             [
-                'label' => 'Home',
+                'label' => 'Dashboard',
                 'url' => route('dashboard'),
                 'icon' => 'pe-7s-home',
             ],
