@@ -3,7 +3,7 @@
         <div class="page-header">
             <div class="row">
                 <div class="col-lg-6 main-header">
-                    <h2>{{ $title_page }}</h2>
+                    <h2>{{ $title_page ?? env('APP_NAME') }}</h2>
                     {{-- <h6 class="mb-0">admin panel</h6> --}}
                 </div>
                 <div class="col-lg-6 breadcrumb-right">

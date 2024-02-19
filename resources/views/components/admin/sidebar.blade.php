@@ -12,8 +12,8 @@
             <li><a class="bar-icons" href="#"><i class="pe-7s-edit"></i><span>Master</span></a>
                 <ul class="iconbar-mainmenu custom-scrollbar">
                     <li class="iconbar-header sub-header">Produk</li>
-                    <li><a href="sidebar-fixed.html">Kategori</a></li>
-                    <li><a href="index.html">Produk</a></li>
+                    <li><a href="{{ route('categories') }}">Kategori</a></li>
+                    <li><a href="{{ route('products') }}">Produk</a></li>
                     <li><a href="index.html">Import Produk</a></li>
                     <li><a href="index.html">Backup Produk</a></li>
                     <li class="iconbar-header sub-header">Pengguna</li>

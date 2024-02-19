@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 
     Route::view('/users', 'user.index')->name('users');
 
+    Route::view('/categories', 'category.index')->name('categories');
+    Route::view('/products', 'product.index')->name('products');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

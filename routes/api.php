@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\SocialAuthController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,14 +23,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', [LoginController::class,'store']);
+Route::post('/login', [LoginController::class, 'store']);
 
 
 Route::prefix('/auth/social/{provider}')->group(function () {
-    Route::get('/', [SocialAuthController::class,'redirectToProvider']);
-    Route::get('/callback', [SocialAuthController::class,'handleCallback']);
+    Route::get('/', [SocialAuthController::class, 'redirectToProvider']);
+    Route::get('/callback', [SocialAuthController::class, 'handleCallback']);
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'isActive']], function () {
     Route::resource('users', UserController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
 });

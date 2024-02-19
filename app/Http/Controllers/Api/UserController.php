@@ -65,13 +65,18 @@ class UserController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore($request->id, 'uuid'),
+                Rule::unique('users', 'email')->ignore($id, 'uuid'),
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('users', 'username')->ignore($id, 'uuid'),
             ],
             'password' => 'string|min:8',
         ]);
@@ -82,7 +87,7 @@ class UserController extends Controller
 
         $user = User::FindUuid($id);
         $request['password'] = $request['password'] ? Hash::make($request['password']) : $user->password;
-        $user->update($request->validate());
+        $user->update($validate->validate());
 
         return new UserResource($user);
     }

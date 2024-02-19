@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('product_id')->constrained();
             $table->foreignUuid('store_id')->constrained();
-            $table->string('name');
+            $table->string('propreties')->nullable();
             $table->string('slug');
             $table->string('code')->unique();
             $table->integer('price');
