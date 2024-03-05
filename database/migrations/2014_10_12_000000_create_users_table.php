@@ -13,22 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->index();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('username')->unique()->unique();
+            $table->string('email')->unique()->index();
+            $table->string('username')->unique()->index();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->unique()->nullable();
             $table->rememberToken();
-            $table->string('role')->default('user');
-            $table->string('image')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('province')->nullable();
-            $table->string('country')->nullable();
-            $table->string('postal_code')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->string('role')->default('user')->index();
+            $table->boolean('is_active')->default(true)->index();
             $table->foreignUuid('store_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
@@ -36,7 +30,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrations.~
      */
     public function down(): void
     {

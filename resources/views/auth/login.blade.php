@@ -57,17 +57,17 @@
                                 <div class="card-body p-0">
                                     <div class="cont text-center">
                                         <div>
-                                            <form class="theme-form">
+                                            <form class="theme-form" id="form-login" action="{{ route('login') }}">
                                                 @csrf
                                                 <h4>LOGIN</h4>
                                                 <h6>Enter your Username and Password</h6>
                                                 <div class="form-group">
                                                     <label class="col-form-label pt-0">Your Name</label>
-                                                    <input class="form-control" type="email" name="email" required="">
+                                                    <input class="form-control" id="login-email" type="email" name="email" required="">
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-form-label">Password</label>
-                                                    <input class="form-control" type="password" name="password"
+                                                    <input class="form-control " id="login-password" type="password" name="password"
                                                         required="">
                                                 </div>
                                                 <div class="checkbox p-0">
@@ -75,7 +75,7 @@
                                                     <label for="checkbox1">Remember me</label>
                                                 </div>
                                                 <div class="form-group form-row mt-3 mb-0">
-                                                    <button class="btn btn-primary btn-block login"
+                                                    <button class="btn btn-primary btn-block login" data-type="login"
                                                         type="button">LOGIN</button>
                                                 </div>
                                                 <div class="login-divider"></div>
@@ -108,45 +108,49 @@
                                                 <div class="img__btn"><span class="m--up">Sign up</span><span
                                                         class="m--in">Sign in</span></div>
                                             </div>
-                                            <div>
-                                                <form class="theme-form">
-                                                    <h4 class="text-center">NEW USER</h4>
-                                                    <h6 class="text-center">Enter your Username and Password For Signup
+                                            <div style="height: 100%; overflow-x: auto;">
+                                                <form class="theme-form" id="form-register" action="{{ route('api.register') }}">
+                                                    <h4 class="text-center">Register</h4>
                                                     </h6>
                                                     <div class="form-row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <input class="form-control" type="text"
-                                                                    placeholder="First Name">
+                                                                <input class="form-control store_name" type="text" placeholder="Nama Toko" id="register-store_name" name="store_name">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <input class="form-control" type="text"
-                                                                    placeholder="Last Name">
+                                                                <input class="form-control name" type="text" placeholder="Nama Lengkap" id="register-name" name="name">
+
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <input class="form-control" type="text" placeholder="User Name">
+                                                        <input class="form-control username" type="text" placeholder="Username" id="register-username" name="username">
                                                     </div>
                                                     <div class="form-group">
-                                                        <input class="form-control" type="password"
-                                                            placeholder="Password">
+                                                        <input class="form-control email" type="text" placeholder="Email" id="register-email" name="email">
                                                     </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control phone" type="text" placeholder="Nomor Telepon" id="register-phone" name="phone">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="password" name="password" id="register-password" placeholder="Password">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="password" name="password_confirmation" id="register-password_conformation" placeholder="Konfirmasi Password">
+                                                    </div>
+                                                    {{-- <div class="form-group">
+                                                        <input class="form-control" type="text" name="password" id="referral" placeholder="Password">
+                                                    </div> --}}
+
                                                     <div class="form-row">
                                                         <div class="col-sm-4">
-                                                            <button class="btn btn-primary" type="submit">Sign
-                                                                Up</button>
-                                                        </div>
-                                                        <div class="col-sm-8">
-                                                            <div class="text-left mt-2 m-l-20">Are you already user? <a
-                                                                    class="btn-link text-capitalize"
-                                                                    href="login.html">Login</a></div>
+                                                            <button class="btn btn-primary" data-type="register" type="button">Daftar</button>
                                                         </div>
                                                     </div>
-                                                    <div class="form-divider"></div>
-                                                    <div class="social mt-3">
+                                                    {{-- <div class="form-divider"></div> --}}
+                                                    {{-- <div class="social mt-3">
                                                         <div class="form-row btn-showcase">
                                                             <div class="col-sm-4">
                                                                 <button class="btn social-btn btn-fb">Facebook</button>
@@ -160,7 +164,7 @@
                                                                     +</button>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                 </form>
                                             </div>
                                         </div>
@@ -195,25 +199,55 @@
     <!-- Plugin used-->
 
     <script>
-        $('.login').click(function (e) {
-            e.preventDefault();
-            let form = $(this).closest('form');
-            let data = form.serialize();
+        $.ajaxSetup({
+            async: true, // Set to true if you want asynchronous requests (this is the default)
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        });
 
-            $.ajax({
-                type: "post",
-                url: "{{ route('login') }}",
-                data: data,
-                success: function (response) {
-                    //save token to local storage
-                    localStorage.setItem('token', response.token);
-                    window.location.href = "{{ route('dashboard') }}";
-                },
-                error: function (response) {
-                    console.log(response);
+        $('.btn-primary').click(function (e) {
+            e.preventDefault();
+            let form;
+            let type = $(this).data('type');
+            if ( type == 'login') {
+                form = $(this).closest('#form-login');
+            } else {
+                form = $(this).closest('#form-register');
+            }
+
+            let data = form.serialize();
+            formAjax(data, form.attr('action'), 'post').then(function (response) {
+                localStorage.setItem('token', response.token);
+                window.location.href = "{{ route('dashboard') }}";
+            })
+            .catch(function (error) {
+                //remove error message
+                $('.text-danger').remove();
+                let errors = error.responseJSON.errors;
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        const element = errors[key];
+                        $(`#${type}-${key}`).after(`<div class="text-danger text-left mt-1" id="error-${key}">${element}</div>`);
+                    }
                 }
             });
         });
+
+        function formAjax(data, url, method = 'post',) {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    type: method,
+                    url: url,
+                    data: data,
+                    dataType: 'json'
+                }).done(function (response) {
+                    resolve(response);
+                }).fail(function (error) {
+                    reject(error);
+                });
+            });
+        }
     </script>
 </body>
 

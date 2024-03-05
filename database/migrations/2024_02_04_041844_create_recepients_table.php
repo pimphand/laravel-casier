@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('recepients', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->unique();
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid');
+            $table->string('name')->index();
+            $table->string('email')->index();
+            $table->string('phone');
             $table->string('address');
             $table->string('city');
             $table->string('province');

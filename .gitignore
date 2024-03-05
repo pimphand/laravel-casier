@@ -20,3 +20,5 @@ yarn-error.log
 /.vscode
 /draft.yaml
 /.blueprint
+stubs
+/stubs

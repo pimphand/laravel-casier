@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignUuid('product_id')->constrained();
             $table->foreignUuid('store_id')->constrained();
             $table->string('propreties')->nullable();
-            $table->string('slug');
-            $table->string('code')->unique();
-            $table->integer('price');
-            $table->integer('stock');
+            $table->string('slug')->index();
+            $table->string('code')->unique()->index();
+            $table->integer('price')->index();
+            $table->integer('stock')->index();
             $table->string('image')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -30,8 +30,12 @@ class User extends Authenticatable implements LaratrustUser
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'phone',
+        'store_id',
+        'balance',
     ];
 
     /**
@@ -47,6 +51,7 @@ class User extends Authenticatable implements LaratrustUser
         'deleted_at',
         'email_verified_at',
         'role',
+        'is_active',
     ];
     /**
      * The attributes that should be cast.
@@ -76,5 +81,15 @@ class User extends Authenticatable implements LaratrustUser
         }
 
         return response()->json(['message' => 'User not found'], 404);
+    }
+
+    public function userStore()
+    {
+        return $this->hasOne(UserStore::class, 'user_id', 'id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 }

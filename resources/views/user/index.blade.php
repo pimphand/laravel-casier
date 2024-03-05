@@ -176,7 +176,14 @@
                                 </li>`;
 
                 // Set HTML pagination to the element with id 'pagination'
-                $('#pagination').html(paginationHtml);
+                if (response.meta.last_page > 1) {
+                        $('#pagination').html(paginationHtml);
+                    }
+                    if (response.meta.total <1) {
+                        html += `<tr>
+                                <td colspan="3" class="text-center">Data tidak ditemukan</td>
+                            </tr>`;
+                    }
                 $('#pengguna').html(html);
             },
             error: function (error) {

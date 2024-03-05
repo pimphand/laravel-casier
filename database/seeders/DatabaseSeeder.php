@@ -14,8 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(LaratrustSeeder::class);
-        \App\Models\Store::factory(1)->create();
-        \App\Models\User::factory(10)->create();
+        $this->call([
+            LaratrustSeeder::class,
+            StoreSeeder::class,
+            UserSeeder::class,
+        ]);
     }
 }

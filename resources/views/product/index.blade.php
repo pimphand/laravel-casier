@@ -5,9 +5,9 @@
 'title_page' => 'Produk',
 'breadcrumb' => [
 [
-'label' => 'Pengguna',
-'url' => route('dashboard'),
-'icon' => 'pe-7s-home',
+    'label' => 'Pengguna',
+    'url' => route('dashboard'),
+    'icon' => 'pe-7s-home',
 ],
 [
 'label' => 'Produk',
@@ -211,10 +211,13 @@ $url = route('products.index');
                 cache: true
             },
             placeholder: 'Search...',
-            minimumInputLength: 2
         });
 
         function loadPage(page) {
+            const url = "{{ $url }}";
+            const paginationElement = $('#pagination');
+            const dataElement = $('#pengguna');
+
             $.ajax({
                 type: "get",
                 url: "{{ $url }}",
@@ -244,29 +247,17 @@ $url = route('products.index');
                             `;
                         });
 
-                        // Update the HTML for pagination
-                        let paginationHtml = '';
-                        let totalPages = response.meta.last_page;
-
-                        // Add Previous button
-                        paginationHtml += `<li class="page-item ${response.meta.current_page === 1 ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" data-page="${response.meta.current_page - 1}">Previous</a>
-                                        </li>`;
-
-                        // Loop to add page numbers
-                        for (let i = 1; i <= totalPages; i++) {
-                            paginationHtml += `<li class="page-item ${response.meta.current_page === i ? 'active' : ''}">
-                                                <a class="page-link" href="#" data-page="${i}">${i}</a>
-                                            </li>`;
-                        }
-
-                        // Add Next button
-                        paginationHtml += `<li class="page-item ${response.meta.current_page === totalPages ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" data-page="${response.meta.current_page + 1}">Next</a>
-                                        </li>`;
+                         // Update the HTML for pagination
+                        let paginationHtml = generatePaginationHtml(response);
 
                         // Set HTML pagination to the element with id 'pagination'
-                        $('#pagination').html(paginationHtml);
+                        paginationElement.html(paginationHtml);
+
+                        $('#pengguna').html(html);
+                    }else{
+                        html += `<tr>
+                                    <td colspan="6" class="text-center">Data tidak ditemukan</td>
+                                </tr>`;
                         $('#pengguna').html(html);
                     }
                 },
@@ -279,7 +270,7 @@ $url = route('products.index');
         function determinePriceRange(item) {
         // Implement logic to determine price range based on your data structure
         // For example, if there is a property called price_range in the item object
-        return item.price_range || 'N/A';
+            return item.price_range || 'N/A';
         }
         $('#pengguna').on('click','.btn-edit', function () {
             //get data form pengguna
@@ -325,7 +316,6 @@ $url = route('products.index');
         function save(type, url, data) {
             $.ajax({
                 method: type,
-                type: 'json',
                 url: url,
                 data: data,
                 contentType: false,

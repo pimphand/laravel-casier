@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
@@ -24,6 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', [LoginController::class, 'store']);
+Route::post('/register', [RegisterController::class, 'store'])->name('api.register');
+
 
 
 Route::prefix('/auth/social/{provider}')->group(function () {

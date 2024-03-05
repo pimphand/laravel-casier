@@ -121,41 +121,26 @@ $url = route('categories.index');
                     let html = '';
 
                     data.forEach((item, index) => {
-                        html += `
-                            <tr>
-                                <th scope="row">${index + 1}</th>
+                            html += `<tr>
+                                <td>${index + 1}</td>
                                 <td>${item.name}</td>
                                 <td>
-                                    <a href="javascript:void(0)" class="btn btn-warning btn-sm btn-edit" data-name="${item.name}" data-id="${item.id}"><i class="fa fa-pencil"></i></a>
-                                    <a href="{{ route('users.index') }}/${item.id}" class="btn btn-danger btn-sm" data-method="delete" data-confirm="Are you sure?"><i class="fa fa-trash"></i></a>
+                                    <a href="javascript:void(0)" class="btn-edit" data-id="${item.id}" data-name="${item.name}"><i class="fa fa-edit"></i></a>
+                                    <a href="javascript:void(0)" class="btn-delete" data-id="${item.id}"><i class="fa fa-trash"></i></a>
                                 </td>
-                            </tr>
-                        `;
+                            </tr>`;
                     });
 
-                    // Update the HTML for pagination
-                    let paginationHtml = '';
-                    let totalPages = response.meta.last_page;
-
-                    // Add Previous button
-                    paginationHtml += `<li class="page-item ${response.meta.current_page === 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="#" data-page="${response.meta.current_page - 1}">Previous</a>
-                                    </li>`;
-
-                    // Loop to add page numbers
-                    for (let i = 1; i <= totalPages; i++) {
-                        paginationHtml += `<li class="page-item ${response.meta.current_page === i ? 'active' : ''}">
-                                            <a class="page-link" href="#" data-page="${i}">${i}</a>
-                                        </li>`;
-                    }
-
-                    // Add Next button
-                    paginationHtml += `<li class="page-item ${response.meta.current_page === totalPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="#" data-page="${response.meta.current_page + 1}">Next</a>
-                                    </li>`;
+                    let paginationHtml = generatePaginationHtml(response);
 
                     // Set HTML pagination to the element with id 'pagination'
-                    $('#pagination').html(paginationHtml);
+                    paginationElement.html(paginationHtml);
+
+                    if (response.meta.total <1) {
+                        html += `<tr>
+                                <td colspan="3" class="text-center">Data tidak ditemukan</td>
+                            </tr>`;
+                    }
                     $('#pengguna').html(html);
                 },
                 error: function (error) {

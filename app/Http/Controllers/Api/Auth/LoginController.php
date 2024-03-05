@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
     public function store(Request $request)  {
+        Log::info('LoginController@store');
         $validated = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
@@ -32,11 +34,11 @@ class LoginController extends Controller
         }
 
         $user->tokens()->delete();
-        $user->createToken('token')->plainTextToken;
         $token = $user->createToken('token')->plainTextToken;
         return response()->json([
             'token' => $token,
             'success' => true,
+            "data" => $user->load('store'),
         ]);
     }
 }

@@ -85,7 +85,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return response()->json(['data' => $request->all()], 400);
     }
 
     /**
